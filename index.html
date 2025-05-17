@@ -303,6 +303,46 @@
     #initializingid {
         z-index: -1 !important;
     }
+
+    @keyframes fadeInOut {
+      0% {
+        opacity: 0;
+        transform: scale(1);
+      }
+      10% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(2);
+      }
+    }
+
+    .pulsating-circle-right {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 30px;
+      height: 30px;
+      background-color: red;
+      border-radius: 50%;
+      opacity: 0;
+      animation: fadeInOut 2s ease-out forwards;
+      pointer-events: none;
+    }
+    .pulsating-circle-left {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 30px;
+      height: 30px;
+      background-color: red;
+      border-radius: 50%;
+      opacity: 0;
+      animation: fadeInOut 2s ease-out forwards;
+      pointer-events: none;
+    }
 </style>
 <input type="file" id="file-input" hidden>
 <div id="drop-target" class="filter">
@@ -379,6 +419,11 @@
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
                 document.getElementById('right-button').click();
+                let circle = document.createElement('div');
+                circle.className = 'pulsating-circle-right';
+                // Add it to the page
+                document.body.appendChild(circle);
+
                 gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
             }
         } else if (GazeData.GazeX < GAZE_THRESHOLD_X_PREV && GazeData.GazeY > GAZE_THRESHOLD_Y) {
@@ -387,6 +432,10 @@
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
                 document.getElementById('left-button').click();
+                let circle = document.createElement('div');
+                circle.className = 'pulsating-circle-left';
+                // Add it to the page
+                document.body.appendChild(circle);
                 gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
             }
         } else {
