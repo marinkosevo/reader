@@ -373,6 +373,7 @@
         const now = Date.now();
         console.log(GazeData);
         if (GazeData.GazeX > GAZE_THRESHOLD_X && GazeData.GazeY > GAZE_THRESHOLD_Y) {
+            console.log("Gaze over threshold");
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
