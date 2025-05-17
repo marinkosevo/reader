@@ -105,6 +105,7 @@ class Reader {
     }
     async open(file) {
         this.view = document.createElement('foliate-view')
+        this.view.id = 'foliate-view-overlay';
         document.body.append(this.view)
         await this.view.open(file)
         this.view.addEventListener('load', this.#onLoad.bind(this))
@@ -120,6 +121,15 @@ class Reader {
         this.view.renderer.setStyles?.(getCSS(this.style))
         this.view.renderer.next()
 
+        setTimeout(() => {
+            const viewElement = document.getElementById('foliate-view-overlay');
+            Object.assign(viewElement.style, {
+              zIndex: '10000',
+              position: 'relative',
+              height: '100%',
+              background: 'white'
+            });
+          }, 1000);
         $('#header-bar').style.visibility = 'visible'
         $('#nav-bar').style.visibility = 'visible'
         $('#left-button').addEventListener('click', () => this.view.goLeft())
