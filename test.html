@@ -1,0 +1,20 @@
+<script type="module">
+    // when SDK files download
+
+// when npm or cdn import
+import EasySeeSo from './easy-seeso.js'  
+
+(async () => {
+  const seeso = new EasySeeSo();
+  // Don't forget to enter your license key.
+  await seeso.init('dev_tm340dwtv8cgs13qx02v5l0icvuwyvmb7p88be2b', afterInitialized, afterFailed)
+})()
+
+function afterInitialized () {
+  console.log('sdk init success!')
+}
+
+function afterFailed () {
+  console.log('sdk init fail!')
+}
+</script>
