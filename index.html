@@ -480,7 +480,6 @@
                 .then(function (resultObject) { // Display the converted content
                     document.getElementById('displayArea').innerHTML = resultObject.value;
                     GazeCloudAPI.StartEyeTracking();
-                    GazeCloudAPI.ShowCalibration();
                 })
                 .catch(function (error) {
                     console.error("Conversion error: ", error);
