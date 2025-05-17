@@ -363,7 +363,7 @@
 <script>
     let gazeOverThresholdStart = null;
     const GAZE_THRESHOLD_X = 1500;
-    const GAZE_THRESHOLD_Y = -400;
+    const GAZE_THRESHOLD_Y = 500;
     const DURATION_THRESHOLD_MS = 3000; // 3 seconds
 
     var gazeX = gazeY = 0;
@@ -372,7 +372,7 @@
 
         const now = Date.now();
         console.log(GazeData);
-        if (GazeData.GazeX > GAZE_THRESHOLD_X && GazeData.GazeY <= GAZE_THRESHOLD_Y) {
+        if (GazeData.GazeX > GAZE_THRESHOLD_X && GazeData.GazeY > GAZE_THRESHOLD_Y) {
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
