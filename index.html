@@ -369,6 +369,8 @@
     var gazeX = gazeY = 0;
     GazeCloudAPI.StartEyeTracking();
     GazeCloudAPI.OnResult = function (GazeData) {
+        document.getElementById("coordinates").innerHTML = 'x = ' + GazeData.GazeX + '<br/> y = ' + GazeData.GazeY;
+
         const now = Date.now();
         console.log(GazeData);
         if (GazeData.GazeX > GAZE_THRESHOLD) {
@@ -376,7 +378,6 @@
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
                 console.log(GazeData)
-                document.getElementById("coordinates").innerHTML = 'x = ' + GazeData.GazeX + '<br/> y = ' + GazeData.GazeY;
 
                 gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
             }
@@ -387,7 +388,7 @@
 
     };
     setTimeout(() => {
-        GazeCloudAPI.StopEyeTracking();
+       // GazeCloudAPI.StopEyeTracking();
     }, 10000);
 
 </script>
