@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eye-Scroll PDF Reader</title>
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    #pdf-container { width: 100%; height: 100vh; overflow-y: scroll; }
+    canvas { display: block; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <div id="pdf-container"></div>
+  <script>
+    // Load PDF
+    const url = 'example.pdf'; // Replace with your actual PDF file
+    const container = document.getElementById('pdf-container');
+
+    const renderPDF = async (url) => {
+      const loadingTask = pdfjsLib.getDocument(url);
+      const pdf = await loadingTask.promise;
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        const viewport = page.getViewport({ scale: 1.5 });
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+        container.appendChild(canvas);
+      }
+    };
+
+    renderPDF(url);
+
+    // Start WebGazer
+    webgazer.setGazeListener((data) => {
+      if (!data) return;
+      const y = data.y;
+      const height = window.innerHeight;
+
+      // If user looks at bottom 20% of screen, scroll down slightly
+      if (y > height * 0.8) {
+        container.scrollBy({ top: 20, behavior: 'smooth' });
+      }
+    }).begin();
+
+    // Disable video feedback
+    webgazer.showVideo(false).showFaceOverlay(false).showFaceFeedbackBox(false);
+  </script>
+</body>
+</html>
