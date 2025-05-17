@@ -32,7 +32,6 @@
         justify-content: center;
         text-align: center;
         visibility: hidden;
-        z-index: 10000;
         position: absolute;
         width: 100%;
         background: white;
@@ -363,22 +362,21 @@
 
 <script>
     let gazeOverThresholdStart = null;
-    const GAZE_THRESHOLD = 500;
+    const GAZE_THRESHOLD_X = 1500;
+    const GAZE_THRESHOLD_Y = -400;
     const DURATION_THRESHOLD_MS = 3000; // 3 seconds
 
     var gazeX = gazeY = 0;
     GazeCloudAPI.StartEyeTracking();
     GazeCloudAPI.OnResult = function (GazeData) {
-        document.getElementById("coordinates").innerHTML = 'x = ' + GazeData.GazeX + '<br/> y = ' + GazeData.GazeY;
 
         const now = Date.now();
         console.log(GazeData);
-        if (GazeData.GazeX > GAZE_THRESHOLD) {
+        if (GazeData.GazeX > GAZE_THRESHOLD_X && GazeData.GazeY <= GAZE_THRESHOLD_Y) {
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
-                console.log(GazeData)
-
+                document.getElementById('right-button').click();
                 gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
             }
         } else {
