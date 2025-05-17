@@ -1,20 +1,28 @@
-<script type="module">
-    // when SDK files download
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>WebGazer Test</title>
+  <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+</head>
+<body>
+  <h1>WebGazer Debug Test</h1>
+  <p>Allow webcam access. Look around the screen and watch the console for gaze data.</p>
 
-// when npm or cdn import
-import EasySeeSo from './easy-seeso.js'  
+  <script>
+    window.onload = function () {
+      webgazer.setGazeListener((data, elapsedTime) => {
+        if (data == null) {
+          console.log("No data yet...");
+          return;
+        }
+        console.log(`Gaze at x: ${data.x}, y: ${data.y} [${elapsedTime}ms]`);
+      }).begin();
 
-(async () => {
-  const seeso = new EasySeeSo();
-  // Don't forget to enter your license key.
-  await seeso.init('dev_tm340dwtv8cgs13qx02v5l0icvuwyvmb7p88be2b', afterInitialized, afterFailed)
-})()
-
-function afterInitialized () {
-  console.log('sdk init success!')
-}
-
-function afterFailed () {
-  console.log('sdk init fail!')
-}
-</script>
+      // Optional: show video + face overlay for debugging
+      webgazer.showVideo(true)
+              .showFaceOverlay(true)
+              .showFaceFeedbackBox(true);
+    };
+  </script>
+</body>
+</html>

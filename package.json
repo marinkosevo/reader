@@ -46,6 +46,7 @@
   ],
   "dependencies": {
     "mammoth": "^1.9.0",
+    "react-eye-tracking": "^0.1.0",
     "seeso": "^0.2.4"
   }
 }
