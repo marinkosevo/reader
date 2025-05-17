@@ -369,7 +369,7 @@
     GazeCloudAPI.StartEyeTracking();
     GazeCloudAPI.OnResult = function (GazeData) {
         const now = Date.now();
-        
+        console.log(GazeData);
         if (GazeData.GazeX > GAZE_THRESHOLD) {
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
