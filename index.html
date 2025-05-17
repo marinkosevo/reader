@@ -362,8 +362,9 @@
 
 <script>
     let gazeOverThresholdStart = null;
-    const GAZE_THRESHOLD_X = 1000;
-    const GAZE_THRESHOLD_Y = 300;
+    const GAZE_THRESHOLD_X_NEXT = 1000;
+    const GAZE_THRESHOLD_X_PREV = 350;
+    const GAZE_THRESHOLD_Y = 350;
     const DURATION_THRESHOLD_MS = 2000; // 3 seconds
 
     var gazeX = gazeY = 0;
@@ -372,7 +373,7 @@
 
         const now = Date.now();
         console.log(GazeData);
-        if (GazeData.GazeX > GAZE_THRESHOLD_X && GazeData.GazeY > GAZE_THRESHOLD_Y) {
+        if (GazeData.GazeX > GAZE_THRESHOLD_X_NEXT && GazeData.GazeY > GAZE_THRESHOLD_Y) {
             console.log("Gaze over threshold");
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
@@ -380,8 +381,15 @@
                 document.getElementById('right-button').click();
                 gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
             }
+        } else if (GazeData.GazeX < GAZE_THRESHOLD_X_PREV && GazeData.GazeY > GAZE_THRESHOLD_Y) {
+            console.log("Gaze under threshold");
+            if (gazeOverThresholdStart === null) {
+                gazeOverThresholdStart = now;
+            } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
+                document.getElementById('left-button').click();
+                gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
+            }
         } else {
-            // Reset if gazeX drops below threshold
             gazeOverThresholdStart = null;
         }
 
