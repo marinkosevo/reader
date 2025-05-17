@@ -43,5 +43,8 @@
     "dictd",
     "stardict",
     "opds"
-  ]
+  ],
+  "dependencies": {
+    "mammoth": "^1.9.0"
+  }
 }
