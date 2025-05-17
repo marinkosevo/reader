@@ -40,6 +40,7 @@
 
     // Start WebGazer
     webgazer.setGazeListener((data) => {
+        console.log(data);
       if (!data) return;
       const y = data.y;
       const height = window.innerHeight;
