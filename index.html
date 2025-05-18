@@ -543,7 +543,7 @@
 <script>
     // CONFIG
     const scrollSpeed = 5; // px per frame
-    const edgeThreshold = 100; // px from top/bottom edge that triggers scrolling
+    const edgeThreshold = 200; // px from top/bottom edge that triggers scrolling
     const overlay = document.getElementById('popupOverlay');
     let gazeOverThresholdStart = null;
     let focunButtonOverThreshold = null;
@@ -622,7 +622,7 @@
                     gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
                 }
                 else {
-                    console.log('turnoff')
+                    alert('Turning off');
                 }
             }
         }
@@ -649,6 +649,10 @@
         }
     };
 
+    //focus
+    document.getElementById("focusBtn").addEventListener("click", function () {
+        alert('Focus button clicked');
+    });
     const summarizeText = async (inputText) => {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
