@@ -440,9 +440,11 @@
         transition: background-color 0.3s ease;
     }
 
-    .popup button:focus {
+    .popup button:focus,
+    .popup button.active {
         outline: none;
         box-shadow: 0 0 0 3px #6ca0ff;
+        opacity: 0.7;
     }
 
     .btn-focus {
@@ -485,11 +487,18 @@
 
 <!-- Overlay and popup -->
 <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
-    <div class="popup">
-        <button class="btn-focus" id="focusBtn">Focus mode</button>
-        <button class="btn-summarize" id="summarizeBtn">Summarize Last chapter</button>
-        <button class="btn-turnoff" id="turnoffBtn">Turn off</button>
+    <div id="popup" class="popup">
+        <div id="buttons">
+            <button class="btn-focus" id="focusBtn">Focus mode</button>
+            <button class="btn-summarize" id="summarizeBtn">Summarize Last chapter</button>
+            <button class="btn-turnoff" id="turnoffBtn">Turn off</button>
+
+        </div>
+
+    <div id="loader" style="display:none; margin-top:10px;">Summarizing...</div>
+    <div id="summaryOutput" style="margin-top:10px; font-weight: bold;"></div>
     </div>
+
 </div>
 <script>
     document.getElementById('fileInput').addEventListener('change', function (event) {
@@ -522,11 +531,12 @@
     let gazeOverThresholdStart = null;
     let focunButtonOverThreshold = null;
     let summaryButtonOverThreshold = null;
+    let summarizeClicked = false;
 
     let overlayActive = false
     // Simulated function to be called with eye tracker data
     function onEyeData(GazeData) {
-        const closedEyesThreshold = 5000;
+        const closedEyesThreshold = 3000;
         const turnOffThreshold = 3000;
         const buttonPressThreshold = 1000;
         const focusBtnThreshold = -100;
@@ -548,12 +558,12 @@
             else {
                 console.log(GazeData);
 
-                if (GazeData.GazeX < focusBtnThreshold ) {
+                if (GazeData.GazeX < focusBtnThreshold) {
                     console.log("focus button");
                     if (focunButtonOverThreshold === null) {
                         focunButtonOverThreshold = now;
                     } else if (now - focunButtonOverThreshold >= buttonPressThreshold) {
-                        alert('focus button pressed');
+                        //alert('focus button pressed');
                         focunButtonOverThreshold = null; // Reset so it doesn't keep triggering
                     }
                 }
@@ -562,12 +572,14 @@
                 }
 
                 //Summary btn
-                if (GazeData.GazeX > summaryBtnThreshold ) {
+                if (GazeData.GazeX > summaryBtnThreshold) {
                     console.log("summary button");
                     if (summaryButtonOverThreshold === null) {
                         summaryButtonOverThreshold = now;
                     } else if (now - summaryButtonOverThreshold >= buttonPressThreshold) {
-                        alert('summary button pressed');
+                        // alert('summary button pressed');
+                        document.getElementById("summarizeBtn").click();
+
                         summaryButtonOverThreshold = null; // Reset so it doesn't keep triggering
                     }
                 }
@@ -590,7 +602,7 @@
                     overlayActive = true;
                     gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
                 }
-                else{
+                else {
                     console.log('turnoff')
                 }
             }
@@ -599,6 +611,45 @@
             gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
         }
     }
+
+    //summarize
+    document.getElementById("summarizeBtn").onclick = async () => {
+        if (!summarizeClicked) {
+            summarizeClicked = true;
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('buttons').style.display = 'none';
+            document.getElementById("summarizeBtn").classList.add('active');
+            setTimeout(() => {
+                document.getElementById("summarizeBtn").classList.remove('active');
+            }, 100); // 1000ms = 1 second
+            const inputText = document.getElementById("displayArea").innerHTML;
+            const summary = await summarizeText(inputText);
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('summaryOutput').textContent = summary;
+            console.log("Summary: " + summary);
+        }
+    };
+
+    const summarizeText = async (inputText) => {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer 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"  // ⚠️ This exposes your key! Better use server
+            },
+            body: JSON.stringify({
+                model: "gpt-3.5-turbo",
+                messages: [
+                    { role: "system", content: "You are a helpful assistant that summarizes text." },
+                    { role: "user", content: `Summarize this: ${inputText}` }
+                ],
+                temperature: 0.7
+            }),
+        });
+
+        const data = await response.json();
+        return data.choices[0].message.content;
+    };
 
     // Simulate receiving eye data from an eye tracker every 100ms
     // Replace this with your real eye tracker callback
