@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>E-Book Reader</title>
-        <link rel="manifest" href="manifest.json">
-    </head>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>E-Book Reader</title>
+    <link rel="manifest" href="manifest.json">
+</head>
 <style>
     :root {
         --active-bg: rgba(0, 0, 0, .05);
     }
 
-    #CamAccessid{
+    #CamAccessid {
         display: none;
         z-index: -10000;
     }
+
     @supports (color-scheme: light dark) {
         @media (prefers-color-scheme: dark) {
             :root {
@@ -356,112 +358,123 @@
     }
 
     body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f4f4f4;
-      font-family: sans-serif;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f4f4;
+        font-family: sans-serif;
     }
 
     /* Hide the default file input */
     input[type="file"] {
-      display: none;
+        display: none;
     }
 
     /* Custom styled button */
     label.upload-button {
-      padding: 1rem 2rem;
-      font-size: 1.2rem;
-      background-color: #007bff;
-      color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      user-select: none;
-      display: inline-block;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        background-color: #007bff;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        user-select: none;
+        display: inline-block;
     }
 
     label.upload-button:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
+        background-color: #0056b3;
+        transform: scale(1.05);
     }
 
     label.upload-button:active {
-      transform: scale(0.98);
+        transform: scale(0.98);
     }
-    .hidden{
+
+    .hidden {
         display: none !important;
     }
-    #displayArea{
+
+    #displayArea {
         padding: 32px;
         height: -webkit-fill-available;
     }
+
     /* Overlay */
     .overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
     }
 
     /* Popup container */
     .popup {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      width: 300px;
-      text-align: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        width: 300px;
+        text-align: center;
     }
+
     /* Buttons styling */
     .popup button {
-      width: 100%;
-      padding: 0.8rem 1rem;
-      margin: 0.5rem 0;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+        width: 100%;
+        padding: 0.8rem 1rem;
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
     }
+
     .popup button:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px #6ca0ff;
+        outline: none;
+        box-shadow: 0 0 0 3px #6ca0ff;
     }
 
     .btn-focus {
-      background-color: #4caf50;
-      color: white;
+        background-color: #4caf50;
+        color: white;
     }
+
     .btn-focus:hover {
-      background-color: #45a049;
+        background-color: #45a049;
     }
 
     .btn-summarize {
-      background-color: #2196f3;
-      color: white;
+        background-color: #2196f3;
+        color: white;
     }
+
     .btn-summarize:hover {
-      background-color: #1976d2;
+        background-color: #1976d2;
     }
 
     .btn-turnoff {
-      background-color: #f44336;
-      color: white;
+        background-color: #f44336;
+        color: white;
     }
+
     .btn-turnoff:hover {
-      background-color: #d32f2f;
+        background-color: #d32f2f;
     }
 
     /* Show overlay */
     .overlay.active {
-      display: flex;
+        display: flex;
     }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
@@ -470,14 +483,14 @@
 <label for="fileInput" class="upload-button">Select File</label>
 <div id="displayArea" class="hidden"></div>
 
-  <!-- Overlay and popup -->
-  <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+<!-- Overlay and popup -->
+<div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
     <div class="popup">
-      <button class="btn-focus" id="focusBtn">Focus mode</button>
-      <button class="btn-summarize" id="summarizeBtn">Summarize Last chapter</button>
-      <button class="btn-turnoff" id="turnoffBtn">Turn off</button>
+        <button class="btn-focus" id="focusBtn">Focus mode</button>
+        <button class="btn-summarize" id="summarizeBtn">Summarize Last chapter</button>
+        <button class="btn-turnoff" id="turnoffBtn">Turn off</button>
     </div>
-  </div>
+</div>
 <script>
     document.getElementById('fileInput').addEventListener('change', function (event) {
         const fileReader = new FileReader();
@@ -562,17 +575,19 @@
         const now = Date.now();
         let eyeY = GazeData.GazeY;
         const screenHeight = window.innerHeight;
-        if (eyeY < edgeThreshold) {
-            // Near top → scroll up
-            window.scrollBy({ top: -scrollSpeed, behavior: 'smooth' });
-        } else if (eyeY > (screenHeight - edgeThreshold)) {
-            // Near bottom → scroll down
-            window.scrollBy({ top: scrollSpeed, behavior: 'smooth' });
+        if (GazeData.state == 1) {
+            //console.log(GazeData
+            if (eyeY < edgeThreshold) {
+                // Near top → scroll up
+                window.scrollBy({ top: -scrollSpeed, behavior: 'smooth' });
+            } else if (eyeY > (screenHeight - edgeThreshold)) {
+                // Near bottom → scroll down
+                window.scrollBy({ top: scrollSpeed, behavior: 'smooth' });
+            }
         }
-
         //overlay
 
-        if (GazeData.state == -1 ) {
+        if (GazeData.state == -1) {
             console.log("not looking");
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
@@ -582,7 +597,7 @@
                 gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
             }
         }
-        else{
+        else {
             gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
         }
     }
@@ -595,10 +610,10 @@
     }
     // Close popup if click outside the popup content
     overlay.addEventListener('click', e => {
-      if (e.target === overlay) {
-        GazeCloudAPI.StartEyeTracking()
-        overlay.classList.remove('active');
-      }
+        if (e.target === overlay) {
+            GazeCloudAPI.StartEyeTracking()
+            overlay.classList.remove('active');
+        }
     });
 </script>
 
