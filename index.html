@@ -564,6 +564,8 @@
                         focunButtonOverThreshold = now;
                     } else if (now - focunButtonOverThreshold >= buttonPressThreshold) {
                         //alert('focus button pressed');
+                        document.getElementById("focusBtn").click();
+
                         focunButtonOverThreshold = null; // Reset so it doesn't keep triggering
                     }
                 }
