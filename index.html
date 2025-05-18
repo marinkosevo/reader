@@ -515,74 +515,67 @@
 <script src="gaze.js"></script>
 
 <script>
-    let gazeOverThresholdStart = null;
-    const GAZE_THRESHOLD_X_NEXT = 1000;
-    const GAZE_THRESHOLD_X_PREV = 350;
-    const GAZE_THRESHOLD_Y = 350;
-    const DURATION_THRESHOLD_MS = 2000; // 3 seconds
-
-    var gazeX = gazeY = 0;
-    // GazeCloudAPI.StartEyeTracking();
-    GazeCloudAPI.OnResult = function (GazeData) {
-
-        const now = Date.now();
-        console.log(GazeData);
-        if (GazeData.GazeX > GAZE_THRESHOLD_X_NEXT && GazeData.GazeY > GAZE_THRESHOLD_Y) {
-            console.log("Gaze over threshold");
-            if (gazeOverThresholdStart === null) {
-                gazeOverThresholdStart = now;
-            } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
-                document.getElementById('right-button').click();
-                let circle = document.createElement('div');
-                circle.className = 'pulsating-circle-right';
-                // Add it to the page
-                document.body.appendChild(circle);
-
-                gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
-            }
-        } else if (GazeData.GazeX < GAZE_THRESHOLD_X_PREV && GazeData.GazeY > GAZE_THRESHOLD_Y) {
-            console.log("Gaze under threshold");
-            if (gazeOverThresholdStart === null) {
-                gazeOverThresholdStart = now;
-            } else if (now - gazeOverThresholdStart >= DURATION_THRESHOLD_MS) {
-                document.getElementById('left-button').click();
-                let circle = document.createElement('div');
-                circle.className = 'pulsating-circle-left';
-                // Add it to the page
-                document.body.appendChild(circle);
-                gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
-            }
-        } else {
-            gazeOverThresholdStart = null;
-        }
-
-    };
-    setTimeout(() => {
-        // GazeCloudAPI.StopEyeTracking();
-    }, 10000);
-
-</script>
-
-<script>
     // CONFIG
     const scrollSpeed = 5; // px per frame
     const edgeThreshold = 300; // px from top/bottom edge that triggers scrolling
     const overlay = document.getElementById('popupOverlay');
+    let gazeOverThresholdStart = null;
+    let focunButtonOverThreshold = null;
+    let summaryButtonOverThreshold = null;
 
+    let overlayActive = false
     // Simulated function to be called with eye tracker data
     function onEyeData(GazeData) {
         const closedEyesThreshold = 5000;
+        const turnOffThreshold = 3000;
+        const buttonPressThreshold = 1000;
+        const focusBtnThreshold = -500;
+        const summaryBtnThreshold = 2000;
         const now = Date.now();
         let eyeY = GazeData.GazeY;
         const screenHeight = window.innerHeight;
         if (GazeData.state == 1) {
             //console.log(GazeData
-            if (eyeY < edgeThreshold) {
-                // Near top → scroll up
-                window.scrollBy({ top: -scrollSpeed, behavior: 'smooth' });
-            } else if (eyeY > (screenHeight - edgeThreshold)) {
-                // Near bottom → scroll down
-                window.scrollBy({ top: scrollSpeed, behavior: 'smooth' });
+            if (!overlayActive) {
+                if (eyeY < edgeThreshold) {
+                    // Near top → scroll up
+                    window.scrollBy({ top: -scrollSpeed, behavior: 'smooth' });
+                } else if (eyeY > (screenHeight - edgeThreshold)) {
+                    // Near bottom → scroll down
+                    window.scrollBy({ top: scrollSpeed, behavior: 'smooth' });
+                }
+            }
+            else {
+                console.log(GazeData);
+
+                if (GazeData.GazeX < focusBtnThreshold ) {
+                    console.log("focus button");
+                    if (focunButtonOverThreshold === null) {
+                        focunButtonOverThreshold = now;
+                    } else if (now - focunButtonOverThreshold >= buttonPressThreshold) {
+                        alert('focus button pressed');
+                        focunButtonOverThreshold = null; // Reset so it doesn't keep triggering
+                    }
+                }
+                else {
+                    focunButtonOverThreshold = null; // Reset so it doesn't keep triggering
+                }
+
+                //Summary btn
+                if (GazeData.GazeX > summaryBtnThreshold ) {
+                    console.log("summary button");
+                    if (summaryButtonOverThreshold === null) {
+                        summaryButtonOverThreshold = now;
+                    } else if (now - summaryButtonOverThreshold >= buttonPressThreshold) {
+                        alert('summary button pressed');
+                        summaryButtonOverThreshold = null; // Reset so it doesn't keep triggering
+                    }
+                }
+                else {
+                    summaryButtonOverThreshold = null; // Reset so it doesn't keep triggering
+                }
+
+
             }
         }
         //overlay
@@ -592,9 +585,14 @@
             if (gazeOverThresholdStart === null) {
                 gazeOverThresholdStart = now;
             } else if (now - gazeOverThresholdStart >= closedEyesThreshold) {
-                overlay.classList.add('active');
-                GazeCloudAPI.StopEyeTracking()
-                gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
+                if (!overlayActive) {
+                    overlay.classList.add('active');
+                    overlayActive = true;
+                    gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
+                }
+                else{
+                    console.log('turnoff')
+                }
             }
         }
         else {
