@@ -546,6 +546,7 @@
     const edgeThreshold = 100; // px from top/bottom edge that triggers scrolling
     const overlay = document.getElementById('popupOverlay');
     let gazeOverThresholdStart = null;
+    let turnedOff = false;
     let focunButtonOverThreshold = null;
     let summaryButtonOverThreshold = null;
     let summarizeClicked = false;
@@ -622,7 +623,10 @@
                     gazeOverThresholdStart = null; // Reset so it doesn't keep triggering
                 }
                 else {
-                    alert('Turning off');
+                    if(!turnedOff){
+                        alert('Turning off');
+                        turnedOff = true;
+                    }
                 }
             }
         }
