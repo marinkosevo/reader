@@ -12,6 +12,7 @@
 
     #CamAccessid{
         display: none;
+        z-index: -10000;
     }
     @supports (color-scheme: light dark) {
         @media (prefers-color-scheme: dark) {
@@ -552,7 +553,7 @@
 <script>
     // CONFIG
     const scrollSpeed = 5; // px per frame
-    const edgeThreshold = 700; // px from top/bottom edge that triggers scrolling
+    const edgeThreshold = 300; // px from top/bottom edge that triggers scrolling
     const overlay = document.getElementById('popupOverlay');
 
     // Simulated function to be called with eye tracker data
