@@ -10,6 +10,9 @@
         --active-bg: rgba(0, 0, 0, .05);
     }
 
+    #CamAccessid{
+        display: none;
+    }
     @supports (color-scheme: light dark) {
         @media (prefers-color-scheme: dark) {
             :root {
@@ -463,12 +466,11 @@
 
 <input type="file" id="fileInput" />
 <label for="fileInput" class="upload-button">Select File</label>
-<div id="displayArea"></div>
+<div id="displayArea" class="hidden"></div>
 
   <!-- Overlay and popup -->
   <div class="overlay" id="popupOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
     <div class="popup">
-      <h2 id="popupTitle">Choose an option</h2>
       <button class="btn-focus" id="focusBtn">Focus mode</button>
       <button class="btn-summarize" id="summarizeBtn">Summarize Last chapter</button>
       <button class="btn-turnoff" id="turnoffBtn">Turn off</button>
@@ -483,6 +485,7 @@
             mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
                 .then(function (resultObject) { // Display the converted content
                     document.getElementById('displayArea').innerHTML = resultObject.value;
+                    document.getElementById('displayArea').classList.remove('hidden');
                     GazeCloudAPI.StartEyeTracking();
                 })
                 .catch(function (error) {
