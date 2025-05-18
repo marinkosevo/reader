@@ -1,6 +1,6 @@
 {
-    "name": "Optika",
-    "short_name": "Optika",
+    "name": "I-Read(er)",
+    "short_name": "I-Read(er)",
     "start_url": "index.html",
     "display": "standalone",
     "background_color": "#ffffff",
